@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+local.settings.json
+
+# FIT files and parsed GeoJSON cache (contain home location)
+data/
+*.fit
