@@ -6,3 +6,8 @@ local.settings.json
 # FIT files and parsed GeoJSON cache (contain home location)
 data/
 *.fit
+
+# Two-tier activity cache: raw FIT bytes and parsed tracks.
+# Full-resolution GPS covering home. Must never be committed.
+.cache/
+*.geojson
