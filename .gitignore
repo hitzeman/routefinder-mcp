@@ -11,3 +11,9 @@ data/
 # Full-resolution GPS covering home. Must never be committed.
 .cache/
 *.geojson
+# Personal Claude Code overrides; the shared harness lives in .claude/settings.json
+.claude/settings.local.json
+
+# Local tooling output
+coverage/
+.env.*

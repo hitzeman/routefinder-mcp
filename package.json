@@ -5,7 +5,7 @@
   "description": "MCP server that turns past COROS activities into a map of distinct repeated routes",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "bin": {
     "routefinder-mcp": "dist/src/index.js"
@@ -13,16 +13,24 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
     "test": "npm run build && node --test \"dist/test/**/*.test.js\"",
+    "test:coverage": "npm run build && node --test --experimental-test-coverage --test-coverage-include=\"dist/src/**\" \"dist/test/**/*.test.js\"",
+    "audit": "npm audit --audit-level=high",
+    "check": "npm run lint && npm run typecheck && npm test",
     "start": "node dist/src/index.js"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "^22.10.2",
-    "typescript": "^5.7.2"
+    "eslint": "^10.14.0",
+    "globals": "^17.14.0",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.72.1"
   },
   "dependencies": {
     "@garmin/fitsdk": "^21.218.0",
     "@modelcontextprotocol/sdk": "^1.32.2",
-    "zod": "^3.25.76"
+    "zod": "^4.6.7"
   }
 }
