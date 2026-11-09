@@ -27,9 +27,9 @@ const SECRET_FRAGMENTS = ["athlete-9f3c21", "deadbeefcafe"];
 
 const fit = syntheticFit({
   points: [
-    { lat: 33.155998, lon: -96.676003 },
-    { lat: 33.161234, lon: -96.681111 },
-    { lat: 33.166789, lon: -96.686222 },
+    { lat: 51.477928, lon: -0.001545 },
+    { lat: 51.478512, lon: -0.000921 },
+    { lat: 51.479104, lon: -0.000307 },
   ],
   totalDistanceM: 11_300,
   startTime: new Date("2026-02-11T12:00:00Z"),
@@ -42,7 +42,7 @@ const fit = syntheticFit({
 test("the leak detector catches a deliberately leaked URL and coordinate", () => {
   const leaky = [
     "[routefinder] info fetched https://s3.coros.com/fit/v2/athlete-9f3c21/x_deadbeefcafe.fit",
-    "[routefinder] info point 33.155998,-96.676003",
+    "[routefinder] info point 51.477928,-0.001545",
   ].join("\n");
 
   assert.ok(findUrlLeak(leaky) !== null, "detector must flag a URL");
@@ -63,11 +63,11 @@ test("the detector does not flag ordinary distances or counts", () => {
 
 test("redact strips URLs and coordinates passed to the logger", () => {
   const scrubbed = redact(
-    "fetched https://s3.coros.com/fit/v2/athlete-9f3c21/x_deadbeefcafe.fit at 33.155998,-96.676003",
+    "fetched https://s3.coros.com/fit/v2/athlete-9f3c21/x_deadbeefcafe.fit at 51.477928,-0.001545",
   );
 
   assert.ok(!scrubbed.includes("athlete-9f3c21"));
-  assert.ok(!scrubbed.includes("33.155998"));
+  assert.ok(!scrubbed.includes("51.477928"));
   assert.match(scrubbed, /\[url-redacted\]/);
   assert.match(scrubbed, /\[coord-redacted\]/);
 });
