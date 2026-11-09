@@ -4,35 +4,9 @@ import { cellsFor, gridAnchorFor, jaccard } from "./cells.js";
 import { clusterByThreshold } from "./cluster.js";
 import { boundingBox, extentM, MILES_TO_METRES } from "./geo.js";
 import { simplifyToBudget } from "./simplify.js";
+import { loadSettings, type DiscoverSettings } from "../config.js";
 
-function numberFromEnv(name: string, fallback: number): number {
-  const raw = process.env[name];
-  if (raw === undefined) return fallback;
-  const parsed = Number(raw);
-  return Number.isFinite(parsed) ? parsed : fallback;
-}
-
-/**
- * Tunable settings.
- *
- * Every one is read from the environment so grouping behaviour can be tuned against the
- * golden set without a code change, which the spec requires.
- *
- * The cell size is unconstrained by coordinate precision: measured in-FIT resolution is
- * ~0.93 cm, some 5,400x finer than a 50 m cell.
- */
-export interface DiscoverSettings {
-  cellSizeM: number;
-  similarityThreshold: number;
-  simplifyToleranceM: number;
-  maxVertices: number;
-  /**
-   * Minimum spatial-extent-to-distance ratio. Below this a track is repeated laps of a
-   * small circuit, not a route: a 400 m oval covered 28 times scores ~0.01, while a real
-   * road loop of the same length scores 0.2 or more.
-   */
-  minExtentRatio: number;
-}
+export type { DiscoverSettings };
 
 /**
  * Defaults measured against the golden-set corpus of 30 real runs in the 7-mile band,
@@ -48,14 +22,8 @@ export interface DiscoverSettings {
  * into one route only at 0.15 or below, so 0.35 keeps better than a 2x margin above
  * failure. A 100 m cell collapses at 0.20, which is why the cell stays at 75 m.
  */
-export function defaultSettings(): DiscoverSettings {
-  return {
-    cellSizeM: numberFromEnv("ROUTEFINDER_CELL_SIZE_M", 75),
-    similarityThreshold: numberFromEnv("ROUTEFINDER_SIMILARITY_THRESHOLD", 0.35),
-    simplifyToleranceM: numberFromEnv("ROUTEFINDER_SIMPLIFY_TOLERANCE_M", 10),
-    maxVertices: numberFromEnv("ROUTEFINDER_MAX_VERTICES", 400),
-    minExtentRatio: numberFromEnv("ROUTEFINDER_MIN_EXTENT_RATIO", 0.05),
-  };
+export function defaultSettings(env: NodeJS.ProcessEnv = process.env): DiscoverSettings {
+  return loadSettings(env).discover;
 }
 
 export interface Route {
