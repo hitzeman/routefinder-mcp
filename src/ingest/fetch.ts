@@ -79,9 +79,7 @@ async function attemptOnce(
   outer: AbortSignal | undefined,
 ): Promise<AttemptOutcome> {
   const controller = new AbortController();
-  let timedOut = false;
   const timer = setTimeout(() => {
-    timedOut = true;
     controller.abort();
   }, limits.timeoutMs);
   const onOuterAbort = (): void => controller.abort();
@@ -142,12 +140,11 @@ async function attemptOnce(
 
     const chunks: Uint8Array[] = [];
     let received = 0;
-    const reader = body.getReader();
+    const reader = (body as ReadableStream<Uint8Array>).getReader();
 
     for (;;) {
       const { done, value } = await reader.read();
       if (done) break;
-      if (value === undefined) continue;
 
       received += value.byteLength;
       if (received > limits.maxBytes) {
@@ -182,7 +179,7 @@ async function attemptOnce(
         reason: "batch deadline reached during download; call again to resume",
       };
     }
-    if (timedOut || (error instanceof Error && error.name === "AbortError")) {
+    if (error instanceof Error && error.name === "AbortError") {
       return {
         ok: false,
         retryable: true,
